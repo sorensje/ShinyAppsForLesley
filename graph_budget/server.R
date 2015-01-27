@@ -1,10 +1,9 @@
 library(shiny)
 
 
-# Define server logic required to plot various variables against mpg
+# Define server logic for graph budget
 shinyServer(function(input, output) {
 
-  
   graph_budg <- reactive({as.numeric(input$budget)}) 
   
   costs <- reactive({c(as.numeric(input$cost_1),as.numeric(input$cost_2),
@@ -25,7 +24,6 @@ shinyServer(function(input, output) {
     n_costs <- length(costs)
     leftover <- budget - total_cost
     
-    
     ## graph params
     colors <- c(brewer.pal(n_costs,'Set3'),'#FFFFFF')
     graph_max <- max(total_cost,budget)
@@ -33,12 +31,13 @@ shinyServer(function(input, output) {
     theme_set(bw)
     onbudget <- leftover>0
     
+    # create df for budget
     dat <- data.frame(costs=c(costs,leftover),cost_labels=factor(c(cost_labels,'Unallocated'),levels=c(cost_labels,'Unallocated')))
     dat$scale_cost <- dat$costs/budget
     dat$budget = budget 
     dat$graph_max = graph_max
     
-    
+    ## check budget on track
     if(onbudget==TRUE){
       graph_color = 'chartreuse4'
       graph_mesg = paste("Under Budget by: $",budget-total_cost,sep="")
@@ -50,7 +49,7 @@ shinyServer(function(input, output) {
     }
     
     
-    
+    # print budget w/ ggplot
     print(
       ggplot(dat, aes(x = factor(1), y = costs, fill = cost_labels)) +
       geom_bar(width = .6, colour = "black",stat='identity',alpha=.6) + 
@@ -68,10 +67,7 @@ shinyServer(function(input, output) {
       theme(plot.title=element_text(face="bold", colour="black", size=22))
     )
   }
-  
-#   output$budgplot <- renderPlot({ graph_budget(input$budget,c(input$cost_1,input$cost_2,input$cost_3,input$cost_4),sum(input$cost_1,
-#                  input$cost_2,input$cost_3,input$cost_4))})
-  
+ 
   output$budgplot <- renderPlot({ graph_budget(graph_budg(),costs(),cost_labels())})
 
 })

@@ -1,14 +1,13 @@
 library(shiny)
 require(ggplot2)
 require(RColorBrewer)
-# Define UI for miles per gallon application
+# Define UI graph_budget
 shinyUI(pageWithSidebar(
   
   # Application title
   headerPanel("Budget-o-matic"),
   
-  # Sidebar with controls to select the variable to plot against mpg
-  # and to specify whether outliers should be included
+  # sideBar is where costs are defined
   sidebarPanel(
     
     numericInput("budget", "Total Budget:", 2000),
@@ -30,21 +29,15 @@ shinyUI(pageWithSidebar(
     ),
 
     submitButton("Update View")
-#     actionButton("submit", "Use Selected Cutoff")
   ),
   
   mainPanel(
     h4("Cost of Project"),
     verbatimTextOutput("garmcost"),
     
-#     h4("Total Cost"),
-#     verbatimTextOutput("tot_cost"),
-    
     div(plotOutput("budgplot"))
-    
+    )
   )
-
-
-))
+)
 
 
